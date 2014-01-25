@@ -1,0 +1,32 @@
+{
+  "name": "jugglingdb-validations",
+  "version": "0.0.1",
+  "description": "Model validations for JugglingDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "jugglingdb": ">= 0.2.x"
+  },
+  "devDependencies": {
+    "should": "~1.2.2",
+    "mocha": "~1.8.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jugglingdb/validations.git"
+  },
+  "author": "Yanick Rochon <yanick.rochon@gmail.com>",
+  "maintainers": [
+    {
+      "name": "Yanick Rochon",
+      "url": "https://github.com/yanickrochon"
+    },
+    {
+      "name": "Anatoliy Chakkaev",
+      "url": "https://github.com/1602"
+    }
+  ],
+  "license": "MIT"
+}
