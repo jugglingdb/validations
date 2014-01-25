@@ -27,7 +27,7 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **ipv4** : *(TODO)* the field's value must be a valid IPv4 (may be an integer or a string).
 * **ipv6** : *(TODO)* the field's value must be a valid IPv6 (may be an integer or a string).
 * **is** : *(TODO)* the field's value must be the given value (using a tripple equality `===`).
-* **isbn** : *(TODO)* the field's value must be a valid ISBM.
+* **isbn** : *(TODO)* the field's value must be a valid ISBN.
 * **len** : *(TODO)* the array-type field's value must contain the given number of elements.
 * **lowercase** : *(TODO)* the field's value must be a lowercased string.
 * **max** : *(TODO)* the field's value must not be greater than the given value.
