@@ -17,7 +17,7 @@ describe('Test `max-length` validator', function() {
 
   it('should not validate', function() {
     maxLength(model, 'password').should.not.be.true;
-    maxLength(model, 'password').should.not.a.String;
+    maxLength(model, 'password').should.be.a('string');
   });
 
   it('should allow changing the error message', function() {
@@ -27,6 +27,11 @@ describe('Test `max-length` validator', function() {
   it('should allow setting adjusting new max', function() {
     maxLength(model, 'login', { max: 2 }).should.not.be.true;
     maxLength(model, 'password', { max: 4000 }).should.be.true;
+  });
+
+  it('should accept options to be the max length value', function() {
+    maxLength(model, 'login', 2).should.not.be.true;
+    maxLength(model, 'password', 4000).should.be.true;
   });
 
 });

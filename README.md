@@ -1,4 +1,4 @@
-## Validations
+## Validations [![Build Status](https://travis-ci.org/jugglingdb/validations.png)](https://travis-ci.org/jugglingdb/validations)
 
 Validations module for [JugglingDB(3)](http://jugglingdb.co).
 
@@ -9,6 +9,7 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **alphanumeric** : *(TODO)* the field's value must contains only alphanumerical characters (a-z0-9).
 * **array** : *(TODO)* the field's value must be an array.
 * **before** : *(TODO)* the date-type field's value must be before the given date.
+* **blacklist** : *(TODO)* the field's value must *not* be one of the specified disallowed values.
 * **boolean** : *(TODO)* the field's value must be boolean.
 * **contains** : *(TODO)* the field's value must contain the given string.
 * **creditcard** : *(TODO)* the field's value is a valid credit card number.
@@ -21,12 +22,11 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **finite** : *(TODO)* the field's value is a finite number.
 * **hexadecimal** : *(TODO)* the field's value is a valid hexadecimal number.
 * **hexColor** : *(TODO)* the field's value is a valid hexadecimal color.
-* **in** : *(TODO)* the field's value must be one of the available given values.
 * **integer** : *(TODO)* the field's value must be an integer (numeric, not **decimal**).
 * **ip** : *(TODO)* the field's value must be a valid IP (may be an integer or a string).
 * **ipv4** : *(TODO)* the field's value must be a valid IPv4 (may be an integer or a string).
 * **ipv6** : *(TODO)* the field's value must be a valid IPv6 (may be an integer or a string).
-* **is** : *(TODO)* the field's value must be the given value (using a tripple equality `===`).
+* **is** : *(TODO)* the field's value must be the given value (using a triple equality `===`).
 * **isbn** : *(TODO)* the field's value must be a valid ISBN.
 * **len** : *(TODO)* the array-type field's value must contain the given number of elements.
 * **lowercase** : *(TODO)* the field's value must be a lowercased string.
@@ -53,7 +53,8 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **url** : *(TODO)* the field's value is a valid URL.
 * **uuid** : *(TODO)* the field's value is a valid UUID (v3 or v4).
 * **uuidv3** : *(TODO)* the field's value is a valid UUIDv3.
-* **uuidv4** : *(TODO)* the field's value is a valid UUIDv4
+* **uuidv4** : *(TODO)* the field's value is a valid UUIDv4.
+* **whitelist** : the field's value must be one of the specified allowed values.
 
 ## License
 
