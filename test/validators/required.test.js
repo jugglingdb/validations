@@ -11,13 +11,13 @@ describe('Test `required` validator', function() {
   it('should validate', function() {
     required(model, 'id', true).should.be.true;
     required(model, 'id', {}).should.be.true;
-    required(model, 'id').should.be.true;  // nothing specified, defaults to true
 
     required(model, 'bar', false).should.be.true;  // not required
   });
 
   it('should ignore "optional" requirements', function() {
-    required(model, 'id', false).should.be.true;
+    required(model, 'id').should.be.true;
+    required(model, 'id', false).should.be.true;     // not required, aka optional
     required(model, 'id', undefined).should.be.true;
     required(model, 'id', null).should.be.true;
   });

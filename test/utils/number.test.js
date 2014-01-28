@@ -1,8 +1,8 @@
 
 var number = require('../../lib/utils/number');
 
-describe('Testing number utilities', function() {
-  describe('Testing getting a number', function() {
+describe('Test number utilities', function() {
+  describe('Test getting a number', function() {
     it('should correctly return a number', function() {
       number.getNumber(0).should.equal(0);
       number.getNumber(0).should.not.equal('0');
@@ -34,7 +34,7 @@ describe('Testing number utilities', function() {
       number.getNumber('123e-4').should.equal(0.0123);
     });
 
-    it('should return false', function() {
+    it('should fail', function() {
       number.getNumber("foo").should.be.false;
       number.getNumber(true).should.be.false;
       number.getNumber(false).should.be.false;
@@ -56,5 +56,21 @@ describe('Testing number utilities', function() {
     });
   });
 
+  describe('Test getting an integer', function() {
+    it('should correctly return an integer');
+    it('should fail');
+  });
 
+  describe('Test ininity', function() {
+    it('should pass positive');
+    it('should pass negative');
+    it('should fail');
+  });
+
+  describe('Test signed value', function() {
+    it('should pass positive');
+    it('should pass negative');
+    it('should pass zero');
+    it('should fail');
+  });
 });

@@ -9,7 +9,7 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **alphanumeric** : *(TODO)* the field's value must contains only alphanumerical characters (a-z0-9).
 * **array** : *(TODO)* the field's value must be an array.
 * **before** : *(TODO)* the date-type field's value must be before the given date.
-* **blacklist** : *(TODO)* the field's value must *not* be one of the specified disallowed values.
+* **blacklist** : the field's value must *not* be one of the specified disallowed values.
 * **boolean** : *(TODO)* the field's value must be boolean.
 * **contains** : *(TODO)* the field's value must contain the given string.
 * **creditcard** : *(TODO)* the field's value is a valid credit card number.
@@ -42,7 +42,7 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **notNull** : *(TODO)* the negation of **null**.
 * **notRegex** : *(TODO)* the negation of **regex**.
 * **null** : *(TODO)* the field's value must be `null`.
-* **number** : *(TODO)* the field's value must be a valid number (may be **integer** or **decimal**).
+* **number** : the field's value must be a valid number (may be **integer** or **decimal**).
 * **regex** : *(TODO)* the field's value must be a regular expression string, or `Regex` object.
 * **required** : the field is defined with *any* value.
 * **string** : *(TODO)* the field's value must be a string.

@@ -7,7 +7,7 @@ describe('Test `whitelist` validator', function() {
     propUpper: "A",
     propInvalid: 1
   };
-  var customMessage = "Testing required successful!";
+  var customMessage = "Testing whitelist successful!";
   var options;
 
   beforeEach(function() {
