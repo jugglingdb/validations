@@ -36,7 +36,7 @@ describe('Test Validations', function() {
     Validations.translator(function(message) { return message; });
   });
 
-  describe('Test built-in validators', function() {
+  describe('where calling require', function() {
     it('should return all the existing validators', function(done) {
       fs.readdir('./lib/validators', function(err,files){
         if (err) throw err;
@@ -54,17 +54,17 @@ describe('Test Validations', function() {
     it('should fail to return unknown validators');
   });
 
-  describe('Test custom validators', function() {
+  describe('where calling define', function() {
     it('should define new validators');
 
     it('should override built-in validators');
   });
 
-  describe('Test validating models', function() {
+  describe('where validating models', function() {
     it('should validate synchronously');
 
     it('should validate asynchronously');
 
-    it('should fail validation');
+    it('should fail');
   });
 });

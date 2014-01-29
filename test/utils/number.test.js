@@ -2,7 +2,7 @@
 var number = require('../../lib/utils/number');
 
 describe('Test number utilities', function() {
-  describe('Test getting a number', function() {
+  describe('where getting a number', function() {
     it('should correctly return a number', function() {
       number.getNumber(0).should.equal(0);
       number.getNumber(0).should.not.equal('0');
@@ -10,10 +10,6 @@ describe('Test number utilities', function() {
 
       number.getNumber(123.456).should.equal(123.456);
       number.getNumber('123.456').should.equal(123.456);
-
-      number.getNumber(-123.456).should.equal(-123.456);
-      number.getNumber('-123.456').should.equal(-123.456);
-
       number.getNumber(1.2345e23).should.equal(1.2345e23);
       number.getNumber(1.2345e23).should.equal(1.2345e+23);
       number.getNumber(1.2345e+23).should.equal(1.2345e+23);
@@ -21,7 +17,11 @@ describe('Test number utilities', function() {
       number.getNumber('1.2345e23').should.equal(1.2345e23);
       number.getNumber('1.2345e+23').should.equal(1.2345e+23);
       number.getNumber('1.2345e-23').should.equal(1.2345e-23);
+      number.getNumber('123e4').should.equal(1230000);
+      number.getNumber('123e-4').should.equal(0.0123);
 
+      number.getNumber(-123.456).should.equal(-123.456);
+      number.getNumber('-123.456').should.equal(-123.456);
       number.getNumber(-1.2345e23).should.equal(-1.2345e23);
       number.getNumber(-1.2345e23).should.equal(-1.2345e+23);
       number.getNumber(-1.2345e+23).should.equal(-1.2345e+23);
@@ -29,48 +29,128 @@ describe('Test number utilities', function() {
       number.getNumber('-1.2345e23').should.equal(-1.2345e23);
       number.getNumber('-1.2345e+23').should.equal(-1.2345e+23);
       number.getNumber('-1.2345e-23').should.equal(-1.2345e-23);
-
-      number.getNumber('123e4').should.equal(1230000);
-      number.getNumber('123e-4').should.equal(0.0123);
+      number.getNumber('-123e4').should.equal(-1230000);
+      number.getNumber('-123e-4').should.equal(-0.0123);
     });
 
     it('should fail', function() {
-      number.getNumber("foo").should.be.false;
-      number.getNumber(true).should.be.false;
-      number.getNumber(false).should.be.false;
-      number.getNumber([]).should.be.false;
-      number.getNumber({}).should.be.false;
-      number.getNumber(undefined).should.be.false;
-      number.getNumber(null).should.be.false;
-
-      number.getNumber(1/0).should.be.false;
-      number.getNumber(1/-0).should.be.false;
-      number.getNumber(Number.NEGATIVE_INFINITY).should.be.false;
-      number.getNumber(1/+0).should.be.false;
-      number.getNumber(Number.POSITIVE_INFINITY).should.be.false;
-
-      number.getNumber('a').should.be.false;
-      number.getNumber('#fff').should.be.false;
-      number.getNumber('123b2').should.be.false
-      number.getNumber('123f2').should.be.false
+      [
+        "foo", true, false, [], {}, undefined, null,
+        1/0, '1/0', 1/-0, '1/0', 1/+0, '1/+0', Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY,
+        'a', '#fff', '123b2', '123f2'
+      ].forEach(function(val) {
+        number.getNumber(val).should.be.false;
+      });
+      number.getNumber().should.be.false;
     });
   });
 
-  describe('Test getting an integer', function() {
-    it('should correctly return an integer');
-    it('should fail');
+  describe('where getting an integer', function() {
+    it('should correctly return an integer', function() {
+      number.getInteger(0).should.equal(0);
+      number.getInteger(0).should.not.equal('0');
+      number.getInteger('0').should.equal(0);
+
+      for (var i=123; i<124; i+=0.01) {
+        number.getInteger(i).should.equal(123);
+        number.getInteger(String(i)).should.equal(123);
+
+        number.getInteger(-i).should.equal(-123);
+        number.getInteger(String(-i)).should.equal(-123);
+      }
+    });
+
+    it('should fail', function() {
+      [
+        "foo", true, false, [], {}, undefined, null,
+        1/0, '1/0', 1/-0, '1/0', 1/+0, '1/+0', Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY,
+        'a', '#fff', '123b2', '123f2'
+      ].forEach(function(val) {
+        number.getInteger(val).should.be.false;
+      });
+      number.getInteger().should.be.false;
+    });
   });
 
-  describe('Test ininity', function() {
-    it('should pass positive');
-    it('should pass negative');
-    it('should fail');
+  describe('where ininity', function() {
+    it('should be valid infinity', function() {
+      [
+        1/0, 1/+0, Number.POSITIVE_INFINITY,
+        1/-0, Number.NEGATIVE_INFINITY
+      ].forEach(function(val) {
+        number.isInfinity(val).should.be.true;
+      });
+    });
+
+    it('should pass positive', function() {
+      [
+        1/0, 1/+0, Number.POSITIVE_INFINITY
+      ].forEach(function(val) {
+        number.isPositiveInfinity(val).should.be.true;
+      });
+    });
+
+    it('should pass negative', function() {
+      [
+        1/-0, Number.NEGATIVE_INFINITY
+      ].forEach(function(val) {
+        number.isNegativeInfinity(val).should.be.true;
+      });
+    });
+
+    it('should fail', function() {
+      [
+        -1.234, -1, 0, 1, 1.234,
+        'Infinity', 'infinity',
+        null, false, null, undefined,
+        [], {}
+      ].forEach(function(val) {
+        number.isPositiveInfinity(val).should.not.be.true;
+        number.isNegativeInfinity(val).should.not.be.true;
+      });
+      number.isPositiveInfinity().should.not.be.true;
+      number.isNegativeInfinity().should.not.be.true;
+    });
   });
 
-  describe('Test signed value', function() {
-    it('should pass positive');
-    it('should pass negative');
-    it('should pass zero');
-    it('should fail');
+  describe('where signed value', function() {
+    it('should pass positive', function() {
+      [
+        123.456, 1.2345e23, 1.2345e+23, 1.2345e-23, 123e4, 123e-4
+      ].forEach(function(val) {
+        number.isPositive(val).should.be.true;
+        number.isPositive(String(val)).should.be.true;
+      });
+    });
+
+    it('should pass negative', function() {
+      [
+        -123.456, -1.2345e23, -1.2345e+23, -1.2345e-23, -123e4, -123e-4
+      ].forEach(function(val) {
+        number.isNegative(val).should.be.true;
+        number.isNegative(String(val)).should.be.true;
+      });
+    });
+
+    it('should pass zero', function() {
+      [0, 0.0, -0, -0.0, +0.0].forEach(function(zero) {
+        number.isZero(zero).should.be.true;
+        number.isZero(String(zero)).should.be.true;
+      });
+    });
+
+    it('should fail', function() {
+      [0, -1, null, undefined, false, "", "a", {}, []].forEach(function(val) {
+        number.isPositive(val).should.not.be.true;
+      });
+
+      [0, 1, null, undefined, false, "", "a", {}, []].forEach(function(val) {
+        number.isNegative(val).should.not.be.true;
+      });
+
+      [-1, 1, null, undefined, false, "", "a", {}, []].forEach(function(val) {
+        number.isZero(val).should.not.be.true;
+      });
+    });
   });
 });
