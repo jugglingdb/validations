@@ -33,12 +33,13 @@ describe('Test `whitelist` validator', function() {
     whitelist(model, 'prop', options).should.be.true;
     whitelist(model, 'prop', options.values).should.be.true;
 
+    whitelist(model, 'propUpper', options).should.be.a('string');
     options.ignoreCase = true;
     whitelist(model, 'propUpper', options).should.be.true;
 
+    whitelist(model, 'propInvalid', options).should.be.a('string');
     options.strictCompare = false;
     whitelist(model, 'propInvalid', options).should.be.true;
-
   });
 
   it('should not validate', function() {

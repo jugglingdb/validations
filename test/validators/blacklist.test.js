@@ -29,10 +29,26 @@ describe('Test `blacklist` validator', function() {
     blacklist(model, 'prop', options).should.be.true;
   });
 
-  it('should validate');
+  it('should validate', function() {
+    blacklist(model, 'propUpper', options).should.be.true;
+    blacklist(model, 'propInvalid', options).should.be.true;
+  });
 
-  it('should not validate');
+  it('should not validate', function() {
+    blacklist(model, 'prop', options).should.be.a('string');
+    blacklist(model, 'prop', options.values).should.a('string');
 
-  it('should allow changing the error message');
+    options.ignoreCase = true;
+    blacklist(model, 'propUpper', options).should.a('string');
+
+    options.strictCompare = false;
+    blacklist(model, 'propInvalid', options).should.a('string');
+  });
+
+  it('should allow changing the error message', function() {
+    options.message = customMessage;
+
+    blacklist(model, 'prop', options).should.equal(customMessage);
+  });
 
 });
