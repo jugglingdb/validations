@@ -50,14 +50,6 @@ describe('Test number utilities', function() {
       number.getInteger(0).should.equal(0);
       number.getInteger(0).should.not.equal('0');
       number.getInteger('0').should.equal(0);
-
-      for (var i=123; i<124; i+=0.01) {
-        number.getInteger(i).should.equal(123);
-        number.getInteger(String(i)).should.equal(123);
-
-        number.getInteger(-i).should.equal(-123);
-        number.getInteger(String(-i)).should.equal(-123);
-      }
     });
 
     it('should fail', function() {
@@ -69,6 +61,14 @@ describe('Test number utilities', function() {
         number.getInteger(val).should.be.false;
       });
       number.getInteger().should.be.false;
+
+      for (var i=123.01; i<124; i+=0.02) {
+        number.getInteger(i).should.be.false;
+        number.getInteger(String(i)).should.be.false;
+
+        number.getInteger(-i).should.be.false;
+        number.getInteger(String(-i)).should.be.false;
+      }
     });
   });
 

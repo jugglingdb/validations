@@ -128,7 +128,7 @@ describe('Test options utilities', function() {
   describe('where getInteger', function() {
     it('should return `options` if an integer', function() {
       [
-        -1.234, -1, 0, 1, 1.234  // note : floats will be converted to ints
+        -1, 0, 1  // note : floats will be converted to ints
       ].forEach(function(val) {
         optUtils.getInteger(val).should.be.a('number');
         optUtils.getInteger(val, 'foo').should.be.a('number');
@@ -143,7 +143,7 @@ describe('Test options utilities', function() {
 
     it('should return the options\' key if an integer', function() {
       [
-        -1.234, -1, 0, 1, 1.234
+        -1, 0, 1
       ].forEach(function(val) {
         optUtils.getInteger({ foo: val }, 'foo').should.be.a('number');
         optUtils.getInteger({ foo: val }, 'foo', false).should.be.a('number');
@@ -154,16 +154,9 @@ describe('Test options utilities', function() {
       });
     });
 
-    it('should return `options` as an integer if a number', function() {
-      optUtils.getInteger(-123.456).should.be.equal(-123);
-      optUtils.getInteger('-123.456').should.be.equal(-123);
-      optUtils.getInteger(123.456).should.be.equal(123);
-      optUtils.getInteger('123.456').should.be.equal(123);
-    });
-
     it('should return the default value if not a valid `options`', function() {
       [
-        undefined, null, false, true, [], {}, "", "a"
+        -1.234, 1.234, undefined, null, false, true, [], {}, "", "a"
       ].forEach(function(val) {
         assert.strictEqual( optUtils.getInteger({ foo: val }, 'foo'), undefined );
         optUtils.getInteger({ foo: val }, 'foo', false).should.be.false;
@@ -173,7 +166,7 @@ describe('Test options utilities', function() {
 
     it('should return the default value if the options\' key is not an integer', function() {
       [
-        undefined, null, false, true, [], {}, "", "a"
+        -1.234, 1.234, undefined, null, false, true, [], {}, "", "a"
       ].forEach(function(val) {
         assert.strictEqual( optUtils.getInteger({ foo: val }, 'foo'), undefined );
         optUtils.getInteger({ foo: val }, 'foo', false).should.be.false;

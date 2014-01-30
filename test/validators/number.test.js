@@ -35,27 +35,27 @@ describe('Test `number` validator', function() {
   });
 
   it('should validate only negative', function() {
-    var positiveOptions = {
+    var negativeOptions = {
       positive: false,
       negative: true,
       zero: false
     };
 
-    number(model, 'positive', positiveOptions).should.not.be.true;
-    number(model, 'negative', positiveOptions).should.be.true;
-    number(model, 'zero', positiveOptions).should.not.be.true;
+    number(model, 'positive', negativeOptions).should.not.be.true;
+    number(model, 'negative', negativeOptions).should.be.true;
+    number(model, 'zero', negativeOptions).should.not.be.true;
   });
 
   it('should validate only zero', function() {
-    var positiveOptions = {
+    var zeroOptions = {
       positive: false,
       negative: false,
       zero: true
     };
 
-    number(model, 'positive', positiveOptions).should.not.be.true;
-    number(model, 'negative', positiveOptions).should.not.be.true;
-    number(model, 'zero', positiveOptions).should.be.true;
+    number(model, 'positive', zeroOptions).should.not.be.true;
+    number(model, 'negative', zeroOptions).should.not.be.true;
+    number(model, 'zero', zeroOptions).should.be.true;
   });
 
   it('should validate "not a number"', function() {
