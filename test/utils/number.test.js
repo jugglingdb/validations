@@ -45,16 +45,54 @@ describe('Test number utilities', function() {
     });
   });
 
+  describe('where getting a decimal', function() {
+    it('should correctly return a decimal', function() {
+      [
+        -123.456, -1.345, -0.123, 0.0, 0.123, 1.234, 123.456
+      ].forEach(function(floatVal) {
+        number.getDecimal(floatVal).should.equal(floatVal);
+        number.getDecimal(floatVal).should.be.a('number');
+        number.getDecimal(String(floatVal)).should.equal(floatVal);
+        number.getDecimal(String(floatVal)).should.be.a('number');
+      });
+
+      for (var i=123.01; i<124; i+=0.02) {
+        number.getDecimal(i).should.not.be.false;
+        number.getDecimal(String(i)).should.not.be.false;
+
+        number.getDecimal(-i).should.not.be.false;
+        number.getDecimal(String(-i)).should.not.be.false;
+      }
+    });
+    it('should fail', function() {
+      [
+        "foo", true, false, [], {}, undefined, null,
+        123, -123, '123', '-123',
+        1/0, '1/0', 1/-0, '1/0', 1/+0, '1/+0', Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY,
+        'a', '#fff', '123b2', '123f2'
+      ].forEach(function(val) {
+        number.getDecimal(val).should.be.false;
+      });
+      number.getDecimal().should.be.false;
+    });
+  });
+
   describe('where getting an integer', function() {
     it('should correctly return an integer', function() {
-      number.getInteger(0).should.equal(0);
-      number.getInteger(0).should.not.equal('0');
-      number.getInteger('0').should.equal(0);
+      [
+        -123, -1, 0, 1, 123
+      ].forEach(function(intVal) {
+        number.getInteger(intVal).should.equal(intVal);
+        number.getInteger(intVal).should.be.a('number');
+        number.getInteger(String(intVal)).should.equal(intVal);
+        number.getInteger(String(intVal)).should.be.a('number');
+      });
     });
 
     it('should fail', function() {
       [
         "foo", true, false, [], {}, undefined, null,
+        123.456, -123.456, '123.456', '-123.456',
         1/0, '1/0', 1/-0, '1/0', 1/+0, '1/+0', Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY,
         'a', '#fff', '123b2', '123f2'
       ].forEach(function(val) {
