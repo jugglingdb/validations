@@ -14,7 +14,7 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **contains** : *(TODO)* the field's value must contain the given string.
 * **creditcard** : *(TODO)* the field's value is a valid credit card number.
 * **date** : *(TODO)* the field's value must be a date.
-* **decimal** : *(TODO)* the field's value must be decimal (numeric, not **integer**).
+* **decimal** : the field's value must be decimal (numeric, not **integer**).
 * **email** : *(TODO)* the field's value must be a valid email address.
 * **empty** : *(TODO)* the field's value msut be empty (i.e. `0`, `""`, `[]`, or `{}`)
 * **equals** : *(TODO)* the field's value must equal the given value (using double equality `==`).
@@ -22,7 +22,7 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **finite** : *(TODO)* the field's value is a finite number.
 * **hexadecimal** : *(TODO)* the field's value is a valid hexadecimal number.
 * **hexColor** : *(TODO)* the field's value is a valid hexadecimal color.
-* **integer** : *(TODO)* the field's value must be an integer (numeric, not **decimal**).
+* **integer** : the field's value must be an integer (numeric, not **decimal**).
 * **ip** : *(TODO)* the field's value must be a valid IP (may be an integer or a string).
 * **ipv4** : *(TODO)* the field's value must be a valid IPv4 (may be an integer or a string).
 * **ipv6** : *(TODO)* the field's value must be a valid IPv6 (may be an integer or a string).
