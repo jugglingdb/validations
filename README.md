@@ -19,7 +19,6 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **empty** : *(TODO)* the field's value msut be empty (i.e. `0`, `""`, `[]`, or `{}`)
 * **equals** : *(TODO)* the field's value must equal the given value (using double equality `==`).
 * **falsey** : *(TODO)* the negation of **truthy**.
-* **finite** : *(TODO)* the field's value is a finite number.
 * **hexadecimal** : *(TODO)* the field's value is a valid hexadecimal number.
 * **hexColor** : *(TODO)* the field's value is a valid hexadecimal color.
 * **integer** : the field's value must be an integer (numeric, not **decimal**).
@@ -48,7 +47,7 @@ Validations module for [JugglingDB(3)](http://jugglingdb.co).
 * **string** : *(TODO)* the field's value must be a string.
 * **truthy** : *(TODO)* the field's value must evaluate to `true` (double equality `==`).
 * **undefined** : *(TODO)* the field's value is equal to `undefined`.
-* **unique** : *(TODO)* the field's value is unique in the dataset. This validation is async and query the database schema.
+* **unique** : the field's value is unique in the dataset. This validation is async and query the database schema.
 * **uppercase** : *(TODO)* the negation of **lowercase**.
 * **url** : *(TODO)* the field's value is a valid URL.
 * **uuid** : *(TODO)* the field's value is a valid UUID (v3 or v4).

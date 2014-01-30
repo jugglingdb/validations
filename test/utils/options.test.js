@@ -76,6 +76,44 @@ describe('Test options utilities', function() {
     });
   });
 
+  describe('where getFunction', function() {
+    var fn = function() { };
+
+    it('should return `options` if a function', function() {
+      optUtils.getFunction(fn).should.be.instanceof(Function);
+      optUtils.getFunction(fn, 'foo').should.be.instanceof(Function);
+      optUtils.getFunction(fn, 'foo', false).should.be.instanceof(Function);
+    });
+
+    it('should return the options\' key value if a function', function() {
+      optUtils.getFunction({ foo: fn }, 'foo').should.be.instanceof(Function);
+      optUtils.getFunction({ foo: fn }, 'foo', false).should.be.instanceof(Function);
+    });
+
+    it('should return the default value if not a valid `options`', function() {
+      [
+        -1, "", "a", [], {}, true, false, null, undefined
+      ].forEach(function(options) {
+        assert.strictEqual( optUtils.getFunction(options), undefined );
+        optUtils.getFunction(options, undefined, false).should.be.false;
+      });
+      assert.strictEqual( optUtils.getFunction(), undefined );
+    });
+
+    it('should return the default value if the options\' key is not a function', function() {
+      [
+        undefined, null, true, false, [], {}, 0, 1, "", "bar"
+      ].forEach(function(val) {
+        optUtils.getFunction({ foo: val }, 'foo', false).should.not.be.instanceof(Function);
+        optUtils.getFunction({ foo: val }, 'foo', false).should.be.false;
+        optUtils.getFunction({ foo: val }, 'bar', false).should.not.be.instanceof(Function);
+        optUtils.getFunction({ foo: val }, 'bar', false).should.be.false;
+      });
+      optUtils.getFunction({}, 'foo', false).should.not.be.instanceof(Function);
+      optUtils.getFunction({}, 'foo', false).should.be.false;
+    });
+  });
+
   describe('where getNumber', function() {
     it('should return `options` if a number', function() {
       [
