@@ -29,12 +29,9 @@ describe('Test options utilities', function() {
       [
         undefined, null, true, false, {}, 0, 1, "", "bar"
       ].forEach(function(val) {
-        optUtils.getArray({ foo: val }, 'foo', false).should.not.be.instanceof(Array);
         optUtils.getArray({ foo: val }, 'foo', false).should.be.false;
-        optUtils.getArray({ foo: val }, 'bar', false).should.not.be.instanceof(Array);
         optUtils.getArray({ foo: val }, 'bar', false).should.be.false;
       });
-      optUtils.getArray({}, 'foo', false).should.not.be.instanceof(Array);
       optUtils.getArray({}, 'foo', false).should.be.false;
     });
   });
@@ -70,7 +67,7 @@ describe('Test options utilities', function() {
         undefined, null, [], {}, 0, 1, "", "bar"
       ].forEach(function(val) {
         assert.strictEqual( optUtils.getBoolean({ foo: val }, 'bar', null), null );
-        assert.strictEqual( optUtils.getBoolean({ foo: val }, 'bar', null), null );
+        optUtils.getBoolean({ foo: val }, 'bar', false).should.be.false;
       });
       assert.strictEqual( optUtils.getBoolean({}, 'foo', null), null );
     });
@@ -104,12 +101,9 @@ describe('Test options utilities', function() {
       [
         undefined, null, true, false, [], {}, 0, 1, "", "bar"
       ].forEach(function(val) {
-        optUtils.getFunction({ foo: val }, 'foo', false).should.not.be.instanceof(Function);
         optUtils.getFunction({ foo: val }, 'foo', false).should.be.false;
-        optUtils.getFunction({ foo: val }, 'bar', false).should.not.be.instanceof(Function);
         optUtils.getFunction({ foo: val }, 'bar', false).should.be.false;
       });
-      optUtils.getFunction({}, 'foo', false).should.not.be.instanceof(Function);
       optUtils.getFunction({}, 'foo', false).should.be.false;
     });
   });

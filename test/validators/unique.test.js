@@ -13,9 +13,6 @@ describe('Test `unique` validator', function() {
   beforeEach(function(done) {
     Model.destroyAll(done);
   });
-  afterEach(function() {
-
-  });
 
   it('should validate', function(done) {
     var model = new Model({ key: "foo" });
@@ -33,6 +30,56 @@ describe('Test `unique` validator', function() {
           done();
         });
       });
+    });
+  });
+
+  it('should call the `where` callback', function(done) {
+    var counter = 0;
+    var model = new Model({ key: "foo" });
+    var shouldBeValid = function shouldBeValid(valid) {
+      valid.should.be.true;
+      checkDone();
+    };
+    var shouldBeInvalid = function shouldBeInvalid(valid) {
+      valid.should.not.be.true;
+      valid.should.be.a('string');
+      checkDone();
+    };
+    var checkDone = function checkDone() {
+      if (--counter === 0) done();
+    };
+
+    [
+      function(where) {
+        where.should.be.an.Object;
+        where.should.have.ownProperty('key');
+      },
+      function(where) {
+        where.should.be.an.Object;
+        return where;
+      }
+    ].forEach(function(whereCallbacks) {
+      counter+=2;
+      unique(model, 'key', whereCallbacks, shouldBeValid);
+      unique(model, 'key', { where: whereCallbacks }, shouldBeValid);
+    });
+
+    counter++;
+    new Model({ key: "foo" }).save(function() {
+      [
+        function(where) {
+          where.should.be.an.Object;
+          return { key: "someOtherValue" }; // replace where
+        }
+      ].forEach(function(whereCallbacks) {
+        counter+=2;
+        unique(model, 'key', whereCallbacks, shouldBeValid);
+        unique(model, 'key', { where: whereCallbacks }, shouldBeValid);
+      });
+
+      unique(model, 'key', undefined, shouldBeInvalid);
+
+      checkDone();
     });
   });
 

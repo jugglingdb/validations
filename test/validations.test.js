@@ -3,6 +3,7 @@ const VALIDATION_MODULE = '../lib/validations';
 const VALIDATOR_PATH = '../lib/validators/';
 
 var fs = require('fs');
+var assert = require("assert");
 
 describe('Test Validations', function() {
   var Validations;
@@ -10,19 +11,39 @@ describe('Test Validations', function() {
 
   var validator = 'fooTestFoo';
   var validatorCallback = function validatorCallback(model, propertyName, options) {
+    propertyName.should.equal('foo');
+    model.should.have.property(propertyName);
+    options.should.be.have.property('test');
+    options.test.should.be.true;
+    // modify model to test validator
+    model.__validator = validatorCallback.name;
     return true;
   };
-  var validatorAsyncCallback = function foo(model, propertyName, options, done) {
-    setTimeout(function() { done(true); }, 1000);
+  var validatorAsyncCallback = function validatorAsyncCallback(model, propertyName, options, done) {
+    propertyName.should.equal('foo');
+    model.should.have.property(propertyName);
+    options.should.be.have.property('test');
+    options.test.should.be.true;
+    setTimeout(function() {
+      // modify model to test validator
+      model.__validator = validatorAsyncCallback.name;
+      done(true);
+    }, 200);
   };
-  var validatorGeneratorCallback = function bar(model, propertyName, options) {
+  var validatorGeneratorCallback = function validatorGeneratorCallback(model, propertyName, options) {
     var generator = {};
     var counter = 2;
-    Object.defineProperty(genrator, 'next', {
+    propertyName.should.equal('foo');
+    model.should.have.property(propertyName);
+    options.should.be.have.property('test');
+    options.test.should.be.true;
+    Object.defineProperty(generator, 'next', {
       enumerable: false,
       writable: false,
       configurable: false,
       value: function() {
+        // modify model to test validator
+        model.__validator = validatorGeneratorCallback.name;
         return {
           value: ((counter--) === 0),
           done: (counter === 0)
@@ -32,12 +53,32 @@ describe('Test Validations', function() {
 
     return generator;
   };
+  var validationError = "Fail validator test";
+  var validatorInvalid = function validatorInvalid(model, propertyName, options) {
+    return validationError;
+  };
+  var validatorException = function validatorException(model, propertyName, options) {
+    throw validationError;
+  };
+
+  var model;
+  var rules;
+
 
   beforeEach(function() {
     delete require.cache[require.resolve(VALIDATION_MODULE)];
     Validations = require(VALIDATION_MODULE);
 
     _translator = Validations.translator();
+
+    // reset model and rules
+    model = {
+      foo: 'bar'
+    };
+    rules = {
+      'foo': {}
+    };
+    rules['foo'][validator] = { 'test': true };
   });
   afterEach(function() {
     Validations.translator(_translator);
@@ -145,10 +186,103 @@ describe('Test Validations', function() {
   });
 
   describe('where validating models', function() {
-    it('should validate synchronously');
+    it('should validate synchronously', function(done) {
+      Validations.define(validator, validatorCallback);
 
-    it('should validate asynchronously');
+      model.should.not.have.property('__validator');
 
-    it('should fail');
+      Validations.validate(model, rules , function(err, m) {
+        assert.equal(err, null);
+        model.should.equal(m);
+        model.should.have.property('__validator');
+        model.__validator.should.equal(validatorCallback.name);
+
+        done();
+      });
+    });
+
+    it('should validate asynchronously', function(done) {
+      Validations.define(validator, validatorAsyncCallback);
+
+      model.should.not.have.property('__validator');
+
+      Validations.validate(model, rules, function(err, m) {
+        assert.equal(err, null);
+        model.should.equal(m);
+        model.should.have.property('__validator');
+        model.__validator.should.equal(validatorAsyncCallback.name);
+
+        done();
+      });
+    });
+
+    it('should validate generator', function(done) {
+      Validations.define(validator, validatorGeneratorCallback);
+
+      model.should.not.have.property('__validator');
+
+      Validations.validate(model, rules, function(err, m) {
+        assert.equal(err, null);
+        model.should.equal(m);
+        model.should.have.property('__validator');
+        model.__validator.should.equal(validatorGeneratorCallback.name);
+
+        done();
+      });
+    });
+
+    it('should chain validators in their respective order', function(done) {
+      var validators = [
+        validatorCallback, validatorAsyncCallback, validatorGeneratorCallback
+      ];
+      var validatorIndex = 4;
+      var testValidatorIndex = function() {
+        var testedValidator;
+        var i;
+
+        if (validatorIndex >= validators.length) done();
+        testedValidator = validators[validatorIndex];
+        rules['foo'] = {}; // reset rules
+        for (i = 0; i < validators.length; i++) {
+          rules['foo'][validators[(i + validatorIndex + 1) % validators.length].name] = { 'test': true };
+        }
+
+        Validations.validate(model, rules, function(err, m) {
+          assert.equal(err, null);
+          model.should.equal(m);
+          model.should.have.property('__validator');
+          model.__validator.should.equal(testedValidator.name);
+
+          validatorIndex++;
+          testValidatorIndex();
+        });
+      };
+
+      validators.forEach(function(validator) {
+        Validations.define(validator.name, validator);
+      });
+
+      testValidatorIndex();
+    });
+
+    it('should fail', function() {
+      Validations.define(validator, validatorInvalid);
+
+      Validations.validate(model, rules, function(err, m) {
+        err.should.be.an.Array;
+        err.should.have.length(1);
+        err[0].should.equal(validationError);
+      });
+    });
+
+    it('should fail without throwing an exception', function() {
+      Validations.define(validator, validatorException);
+
+      Validations.validate(model, rules, function(err, m) {
+        err.should.be.an.Array;
+        err.should.have.length(1);
+        err[0].should.equal(validationError);
+      });
+    });
   });
 });
