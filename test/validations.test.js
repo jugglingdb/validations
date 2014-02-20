@@ -197,9 +197,10 @@ describe('Test Validations', function() {
 
       model.should.not.have.property(testValidatorMarker);
 
-      Validations.validate(model, rules , function(err, m) {
-        assert.equal(err, null);
-        model.should.equal(m);
+      Validations.validate(model, rules , function(err, valid) {
+        valid.should.be.true;
+        assert.strictEqual(err, null);
+        model.should.equal(this);
         model.should.have.property(testValidatorMarker);
         model[testValidatorMarker].should.eql([validatorCallback.name]);
 
@@ -212,9 +213,9 @@ describe('Test Validations', function() {
 
       model.should.not.have.property(testValidatorMarker);
 
-      Validations.validate(model, rules, function(err, m) {
+      Validations.validate(model, rules, function(err, valid) {
         assert.equal(err, null);
-        model.should.equal(m);
+        model.should.equal(this);
         model.should.have.property(testValidatorMarker);
         model[testValidatorMarker].should.eql([validatorAsyncCallback.name]);
 
@@ -227,9 +228,9 @@ describe('Test Validations', function() {
 
       model.should.not.have.property(testValidatorMarker);
 
-      Validations.validate(model, rules, function(err, m) {
+      Validations.validate(model, rules, function(err, valid) {
         assert.equal(err, null);
-        model.should.equal(m);
+        model.should.equal(this);
         model.should.have.property(testValidatorMarker);
         model[testValidatorMarker].should.eql([validatorGeneratorCallback.name]);
         done();
@@ -252,9 +253,9 @@ describe('Test Validations', function() {
           rules['foo'][validators[(i + validatorIndex + 1) % validators.length].name] = { 'test': true };
         }
 
-        Validations.validate(model, rules, function(err, m) {
+        Validations.validate(model, rules, function(err, valid) {
           assert.equal(err, null);
-          model.should.equal(m);
+          model.should.equal(this);
           model.should.have.property(testValidatorMarker);
           model[testValidatorMarker].should.eql(validators.map(function(item) { return item.name; }));
 
@@ -273,10 +274,11 @@ describe('Test Validations', function() {
     it('should fail', function(done) {
       Validations.define(validator, validatorInvalid);
 
-      Validations.validate(model, rules, function(err, m) {
-        err.should.be.an.Array;
-        err.should.have.length(1);
-        err[0].should.equal(validationError);
+      Validations.validate(model, rules, function(err, valid) {
+        valid.should.be.false;
+        assert.notStrictEqual(err, null);
+        err.should.have.property('foo');
+        err['foo'].should.eql([validationError]);
         done();
       });
     });
@@ -284,10 +286,11 @@ describe('Test Validations', function() {
     it('should fail without throwing an exception', function(done) {
       Validations.define(validator, validatorException);
 
-      Validations.validate(model, rules, function(err, m) {
-        err.should.be.an.Array;
-        err.should.have.length(1);
-        err[0].should.equal(validationError);
+      Validations.validate(model, rules, function(err, valid) {
+        valid.should.be.false;
+        assert.notStrictEqual(err, null);
+        err.should.have.property('foo');
+        err['foo'].should.eql([validationError]);
         done();
       });
     });
@@ -314,10 +317,11 @@ describe('Test Validations', function() {
       }
 
       rules['foo'][validator]['if'] = testValues.pop();
-      Validations.validate(model, rules, function(err, m) {
-        err.should.be.an.Array;
-        err.should.have.length(1);
-        err[0].should.equal(validationError);
+      Validations.validate(model, rules, function(err, valid) {
+        valid.should.be.false;
+        assert.notStrictEqual(err, null);
+        err.should.have.property('foo');
+        err['foo'].should.eql([validationError]);
         testNextValue();
       });
     })();
@@ -343,9 +347,10 @@ describe('Test Validations', function() {
       }
 
       rules['foo'][validator]['if'] = testValues.pop();
-      Validations.validate(model, rules, function(err, m) {
-        assert.equal(err, null);
-        model.should.equal(m);
+      Validations.validate(model, rules, function(err, valid) {
+        valid.should.be.true;
+        assert.strictEqual(err, null);
+        model.should.equal(this);
         model.should.not.have.property(testValidatorMarker);
         testNextValue();
       });
@@ -373,10 +378,11 @@ describe('Test Validations', function() {
       }
 
       rules['foo'][validator]['unless'] = testValues.pop();
-      Validations.validate(model, rules, function(err, m) {
-        err.should.be.an.Array;
-        err.should.have.length(1);
-        err[0].should.equal(validationError);
+      Validations.validate(model, rules, function(err, valid) {
+        valid.should.be.false;
+        assert.notStrictEqual(err, null);
+        err.should.have.property('foo');
+        err['foo'].should.eql([validationError]);
         testNextValue();
       });
     })();
@@ -404,11 +410,11 @@ describe('Test Validations', function() {
       }
 
       rules['foo'][validator]['unless'] = testValues.pop();
-      Validations.validate(model, rules , function(err, m) {
-        assert.equal(err, null);
-        model.should.equal(m);
+      Validations.validate(model, rules , function(err, valid) {
+        valid.should.be.true;
+        assert.strictEqual(err, null);
+        model.should.equal(this);
         model.should.not.have.property(testValidatorMarker);
-
         testNextValue();
       });
     })();
