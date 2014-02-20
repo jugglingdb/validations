@@ -8,25 +8,26 @@ var assert = require("assert");
 describe('Test Validations', function() {
   var Validations;
   var _translator;
+  var testValidatorMarker = '%test%__Validators';
 
   var validator = 'fooTestFoo';
   var validatorCallback = function validatorCallback(model, propertyName, options) {
     propertyName.should.equal('foo');
-    model.should.have.property(propertyName);
+    model.__data.should.have.property(propertyName);
     options.should.be.have.property('test');
     options.test.should.be.true;
     // modify model to test validator
-    model.__validator = validatorCallback.name;
+    (model[testValidatorMarker] = (model[testValidatorMarker] || [])).push(validatorCallback.name);
     return true;
   };
   var validatorAsyncCallback = function validatorAsyncCallback(model, propertyName, options, done) {
     propertyName.should.equal('foo');
-    model.should.have.property(propertyName);
+    model.__data.should.have.property(propertyName);
     options.should.be.have.property('test');
     options.test.should.be.true;
     setTimeout(function() {
       // modify model to test validator
-      model.__validator = validatorAsyncCallback.name;
+      (model[testValidatorMarker] = (model[testValidatorMarker] || [])).push(validatorAsyncCallback.name);
       done(true);
     }, 200);
   };
@@ -34,7 +35,7 @@ describe('Test Validations', function() {
     var generator = {};
     var counter = 2;
     propertyName.should.equal('foo');
-    model.should.have.property(propertyName);
+    model.__data.should.have.property(propertyName);
     options.should.be.have.property('test');
     options.test.should.be.true;
     Object.defineProperty(generator, 'next', {
@@ -42,11 +43,14 @@ describe('Test Validations', function() {
       writable: false,
       configurable: false,
       value: function() {
+        var counterValue = ((--counter) === 0);
         // modify model to test validator
-        model.__validator = validatorGeneratorCallback.name;
+        if (counterValue) {
+          (model[testValidatorMarker] = (model[testValidatorMarker] || [])).push(validatorGeneratorCallback.name);
+        }
         return {
-          value: ((counter--) === 0),
-          done: (counter === 0)
+          value: counterValue,
+          done: counterValue
         };
       }
     });
@@ -73,7 +77,9 @@ describe('Test Validations', function() {
 
     // reset model and rules
     model = {
-      foo: 'bar'
+      __data: {
+        foo: 'bar'
+      }
     };
     rules = {
       'foo': {}
@@ -189,13 +195,13 @@ describe('Test Validations', function() {
     it('should validate synchronously', function(done) {
       Validations.define(validator, validatorCallback);
 
-      model.should.not.have.property('__validator');
+      model.should.not.have.property(testValidatorMarker);
 
       Validations.validate(model, rules , function(err, m) {
         assert.equal(err, null);
         model.should.equal(m);
-        model.should.have.property('__validator');
-        model.__validator.should.equal(validatorCallback.name);
+        model.should.have.property(testValidatorMarker);
+        model[testValidatorMarker].should.eql([validatorCallback.name]);
 
         done();
       });
@@ -204,13 +210,13 @@ describe('Test Validations', function() {
     it('should validate asynchronously', function(done) {
       Validations.define(validator, validatorAsyncCallback);
 
-      model.should.not.have.property('__validator');
+      model.should.not.have.property(testValidatorMarker);
 
       Validations.validate(model, rules, function(err, m) {
         assert.equal(err, null);
         model.should.equal(m);
-        model.should.have.property('__validator');
-        model.__validator.should.equal(validatorAsyncCallback.name);
+        model.should.have.property(testValidatorMarker);
+        model[testValidatorMarker].should.eql([validatorAsyncCallback.name]);
 
         done();
       });
@@ -219,14 +225,13 @@ describe('Test Validations', function() {
     it('should validate generator', function(done) {
       Validations.define(validator, validatorGeneratorCallback);
 
-      model.should.not.have.property('__validator');
+      model.should.not.have.property(testValidatorMarker);
 
       Validations.validate(model, rules, function(err, m) {
         assert.equal(err, null);
         model.should.equal(m);
-        model.should.have.property('__validator');
-        model.__validator.should.equal(validatorGeneratorCallback.name);
-
+        model.should.have.property(testValidatorMarker);
+        model[testValidatorMarker].should.eql([validatorGeneratorCallback.name]);
         done();
       });
     });
@@ -250,8 +255,8 @@ describe('Test Validations', function() {
         Validations.validate(model, rules, function(err, m) {
           assert.equal(err, null);
           model.should.equal(m);
-          model.should.have.property('__validator');
-          model.__validator.should.equal(testedValidator.name);
+          model.should.have.property(testValidatorMarker);
+          model[testValidatorMarker].should.eql(validators.map(function(item) { return item.name; }));
 
           validatorIndex++;
           testValidatorIndex();
@@ -265,24 +270,148 @@ describe('Test Validations', function() {
       testValidatorIndex();
     });
 
-    it('should fail', function() {
+    it('should fail', function(done) {
       Validations.define(validator, validatorInvalid);
 
       Validations.validate(model, rules, function(err, m) {
         err.should.be.an.Array;
         err.should.have.length(1);
         err[0].should.equal(validationError);
+        done();
       });
     });
 
-    it('should fail without throwing an exception', function() {
+    it('should fail without throwing an exception', function(done) {
       Validations.define(validator, validatorException);
 
       Validations.validate(model, rules, function(err, m) {
         err.should.be.an.Array;
         err.should.have.length(1);
         err[0].should.equal(validationError);
+        done();
       });
     });
+  });
+
+  // test only if...
+  it('should validate "if" is true for a given rule', function(done) {
+    var testValues = [
+      'bar',
+      function() {
+        model.should.equal(this);
+        return true;
+      },
+      'modelCallback'
+    ];
+
+    Validations.define(validator, validatorInvalid);
+    model.modelCallback = testValues[1];
+    model.__data.bar = true;
+
+    (function testNextValue() {
+      if (!testValues.length) {
+        return done();
+      }
+
+      rules['foo'][validator]['if'] = testValues.pop();
+      Validations.validate(model, rules, function(err, m) {
+        err.should.be.an.Array;
+        err.should.have.length(1);
+        err[0].should.equal(validationError);
+        testNextValue();
+      });
+    })();
+  });
+
+  // test only if...
+  it('should not validate "if" is false for a given rule', function(done) {
+    var testValues = [
+      'bar',
+      function() {
+        model.should.equal(this);
+        return false;
+      },
+      'modelCallback'
+    ];
+
+    Validations.define(validator, validatorInvalid);
+    model.modelCallback = testValues[1];
+
+    (function testNextValue() {
+      if (!testValues.length) {
+        return done();
+      }
+
+      rules['foo'][validator]['if'] = testValues.pop();
+      Validations.validate(model, rules, function(err, m) {
+        assert.equal(err, null);
+        model.should.equal(m);
+        model.should.not.have.property(testValidatorMarker);
+        testNextValue();
+      });
+    })();
+
+  });
+
+  // do NOT test unless...
+  it('should validate "unless" is false for a given rule', function(done) {
+    var testValues = [
+      'bar',
+      function() {
+        model.should.equal(this);
+        return false;
+      },
+      'modelCallback'
+    ];
+
+    Validations.define(validator, validatorInvalid);
+    model.modelCallback = testValues[1];
+
+    (function testNextValue() {
+      if (!testValues.length) {
+        return done();
+      }
+
+      rules['foo'][validator]['unless'] = testValues.pop();
+      Validations.validate(model, rules, function(err, m) {
+        err.should.be.an.Array;
+        err.should.have.length(1);
+        err[0].should.equal(validationError);
+        testNextValue();
+      });
+    })();
+
+  });
+
+  // do NOT test unless...
+  it('should not validate "unless" is true for a given rule', function(done) {
+    var testValues = [
+      'bar',
+      function() {
+        model.should.equal(this);
+        return true;
+      },
+      'modelCallback'
+    ];
+
+    Validations.define(validator, validatorInvalid);
+    model.modelCallback = testValues[1];
+    model.__data.bar = true;
+
+    (function testNextValue() {
+      if (!testValues.length) {
+        return done();
+      }
+
+      rules['foo'][validator]['unless'] = testValues.pop();
+      Validations.validate(model, rules , function(err, m) {
+        assert.equal(err, null);
+        model.should.equal(m);
+        model.should.not.have.property(testValidatorMarker);
+
+        testNextValue();
+      });
+    })();
+
   });
 });

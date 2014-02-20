@@ -3,13 +3,15 @@ var decimal = require('../../lib/validators/decimal');
 
 describe('Test `decimal` validator', function() {
   var model = {
-    positive: 123,
-    negative: -123,
-    zero: 0,
-    floatPositive: 123.456,
-    floatNegative: -123.456,
-    floatZero: '0.0',
-    foo: "bar"
+    __data: {
+      positive: 123,
+      negative: -123,
+      zero: 0,
+      floatPositive: 123.456,
+      floatNegative: -123.456,
+      floatZero: '0.0',
+      foo: "bar"
+    }
   };
   var customMessage = "Testing decimal successful!";
 
@@ -26,7 +28,7 @@ describe('Test `decimal` validator', function() {
     decimal(model, 'floatZero').should.be.true;
     decimal(model, 'zero').should.be.true;
 
-    Object.keys(model).forEach(function(propertyName) {
+    Object.keys(model.__data).forEach(function(propertyName) {
       decimal(model, propertyName, false).should.be.true;
     });
   });

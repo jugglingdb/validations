@@ -3,9 +3,11 @@ var blacklist = require('../../lib/validators/blacklist');
 
 describe('Test `blacklist` validator', function() {
   var model = {
-    prop: "a",
-    propUpper: "A",
-    propInvalid: 1
+    __data: {
+      prop: "a",
+      propUpper: "A",
+      propInvalid: 1
+    }
   };
   var customMessage = "Testing blacklist successful!";
   var options;

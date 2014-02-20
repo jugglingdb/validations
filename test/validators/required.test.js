@@ -3,8 +3,10 @@ var required = require('../../lib/validators/required');
 
 describe('Test `required` validator', function() {
   var model = {
-    id: 1,
-    foo: "bar"
+    __data: {
+      id: 1,
+      foo: "bar"
+    }
   };
   var customMessage = "Testing required successful!";
 

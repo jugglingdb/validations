@@ -3,8 +3,10 @@ var minLength = require('../../lib/validators/min-length');
 
 describe('Test `min-length` validator', function() {
   var model = {
-    firstName: "Jo",
-    lastName: "Johnson"
+    __data: {
+      firstName: "Jo",
+      lastName: "Johnson"
+    }
   };
   var customMessage = "Testing min-length successful!";
 

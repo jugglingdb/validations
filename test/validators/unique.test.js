@@ -1,11 +1,10 @@
 
-var Schema = require('jugglingdb').Schema;
 var unique = require('../../lib/validators/unique');
 
 describe('Test `unique` validator', function() {
 //  var model = db.Shema
   var customMessage = "Testing unique successful!";
-  var db = new Schema('memory');
+  var db = getSchema();
   var Model = db.define('Model', {
       key: {type: String, index: true}
   });

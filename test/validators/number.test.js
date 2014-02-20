@@ -3,10 +3,12 @@ var number = require('../../lib/validators/number');
 
 describe('Test `number` validator', function() {
   var model = {
-    positive: 123.456,
-    negative: -123.456,
-    zero: 0,
-    foo: "bar"
+    __data: {
+      positive: 123.456,
+      negative: -123.456,
+      zero: 0,
+      foo: "bar"
+    }
   };
   var customMessage = "Testing number successful!";
 

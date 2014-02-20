@@ -205,4 +205,53 @@ describe('Test options utilities', function() {
       });
     });
   });
+
+  describe('where getString', function() {
+    it('should return `options` if a string', function() {
+      [
+        "", "bar"
+      ].forEach(function(val) {
+        optUtils.getString(val).should.be.a('string');
+        optUtils.getString(val, 'foo').should.be.a('string');
+        optUtils.getString(val, 'foo', false).should.be.a('string');
+
+        // test for explicit String instances, too!
+        optUtils.getString(String(val)).should.be.a('string');
+        optUtils.getString(String(val), 'foo').should.be.a('string');
+        optUtils.getString(String(val), 'foo', false).should.be.a('string');
+      });
+    });
+
+    it('should return the options\' key if a string', function() {
+      [
+        "", "bar"
+      ].forEach(function(val) {
+        optUtils.getString({ foo: val }, 'foo').should.be.a('string');
+        optUtils.getString({ foo: val }, 'foo', false).should.be.a('string');
+
+        // test for explicit String instances, too!
+        optUtils.getString({ foo: String(val) }, 'foo').should.be.a('string');
+        optUtils.getString({ foo: String(val) }, 'foo', false).should.be.a('string');
+      });
+    });
+
+    it('should return the default value if not a valid `options`', function() {
+      [
+        -1, 0, 1, -1.234, 1.234, undefined, null, false, true, [], {}
+      ].forEach(function(val) {
+        assert.strictEqual( optUtils.getString({ foo: val }, 'foo'), undefined );
+        optUtils.getString({ foo: val }, 'foo', false).should.be.false;
+      });
+      assert.strictEqual( optUtils.getString(), undefined );
+    });
+
+    it('should return the default value if the options\' key is not a string', function() {
+      [
+        -1, 0, 1, -1.234, 1.234, undefined, null, false, true, [], {}
+      ].forEach(function(val) {
+        assert.strictEqual( optUtils.getString({ foo: val }, 'foo'), undefined );
+        optUtils.getString({ foo: val }, 'foo', false).should.be.false;
+      });
+    });
+  });
 });

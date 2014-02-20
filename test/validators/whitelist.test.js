@@ -3,9 +3,11 @@ var whitelist = require('../../lib/validators/whitelist');
 
 describe('Test `whitelist` validator', function() {
   var model = {
-    prop: "a",
-    propUpper: "A",
-    propInvalid: 1
+    __data: {
+      prop: "a",
+      propUpper: "A",
+      propInvalid: 1
+    }
   };
   var customMessage = "Testing whitelist successful!";
   var options;

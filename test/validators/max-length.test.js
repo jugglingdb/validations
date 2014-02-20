@@ -3,11 +3,13 @@ var maxLength = require('../../lib/validators/max-length');
 
 describe('Test `max-length` validator', function() {
   var model = {
-    login: "john.smith@domain.com",
-    password: ""
+    __data: {
+      login: "john.smith@domain.com",
+      password: ""
+    }
   };
   for (var i=0; i<800; i++) {  // default 255
-    model.password += String.fromCharCode(97 + (i%26));
+    model.__data.password += String.fromCharCode(97 + (i%26));
   }
   var customMessage = "Testing max-length successful!";
 

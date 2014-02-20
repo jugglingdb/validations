@@ -3,13 +3,15 @@ var integer = require('../../lib/validators/integer');
 
 describe('Test `integer` validator', function() {
   var model = {
-    positive: 123,
-    negative: -123,
-    zero: 0,
-    floatPositive: 123.456,
-    floatNegative: -123.456,
-    floatZero: '0.0',
-    foo: "bar"
+    __data: {
+      positive: 123,
+      negative: -123,
+      zero: 0,
+      floatPositive: 123.456,
+      floatNegative: -123.456,
+      floatZero: '0.0',
+      foo: "bar"
+    }
   };
   var customMessage = "Testing integer successful!";
 
@@ -24,7 +26,7 @@ describe('Test `integer` validator', function() {
     integer(model, 'negative').should.be.true;
     integer(model, 'zero').should.be.true;
 
-    Object.keys(model).forEach(function(propertyName) {
+    Object.keys(model.__data).forEach(function(propertyName) {
       integer(model, propertyName, false).should.be.true;
     });
   });
